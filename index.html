@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <!--comment tag-->
+        <title>Test</title>
+
+        <script>
+            function checkTime() {
+                var d = new Date();
+                var minutes = d.getMinutes();
+                document.getElementById("time").innerHTML = d.toLocaleTimeString();
+                if (minutes % 2 == 1) document.getElementById("content").style.visibility = "hidden";
+                else document.getElementById("content").style.visibility = "visible";
+            }
+        </script>
+    </head>
+    <body>
+        <script>
+            setInterval(checkTime, 1000);
+            function checkTime() {
+                var d = new Date();
+                var minutes = d.getMinutes();
+                document.getElementById("time").innerHTML = d.toLocaleTimeString();
+                if (minutes % 2 == 1) document.getElementById("content").style.visibility = "hidden";
+                else document.getElementById("content").style.visibility = "visible";
+            }
+        </script>
+
+        <h1>Exam will be locked if minute count is odd</h1>
+        <p id = "time">Loading...</p>
+        
+        <div id = "content">
+            <h1>Exam Content</h1>
+
+            <p>Upload HTML file with exam questions</p>
+
+            <hr><br>
+
+            <img id = "smileyID" src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/SNice.svg/1200px-SNice.svg.png"
+                title = "Smiley" width = 100px height = 100px alt = "Alt Tag">
+            
+            <hr><br>
+
+            <button onclick = "alert('Mr. Bermel is awesome');">Click Me</button><br>
+        </div>
+    </body>
+</html>
