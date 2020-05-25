@@ -11,58 +11,61 @@
             //Use military time format
 
             var startTime = new Date(2020, 4, 25, 12, 00);
-            var endTime = new Date(2020, 4, 28, 12, 00);
+            var endTime = new Date(2020, 4, 26, 12, 00);
         </script>
 
         <style>
-            .visible {
-                visibility: visible;
-                background: beige;
-            }
-
-            .hidden {
-                visibility: hidden;
+            body {
+                background-color: beige;
+                font-family: monospace;
             }
 
             .title {
-                padding: 30px;
+                padding: 25px;
                 background: khaki;
                 color: black;
-                font-size: 30px;
+                font-size: 35px;
             }
             
             .timer {
                 position: fixed;
-                bottom: 0;
-                right: 5%;
+                bottom: 10px;
+                left: 1000px;
+                width: 240px;
                 text-align: center;
                 color: black;
-                font-size: 30px;
+                font-size: 25px;
             }
-            
-            /*timer warning*/
-            .warning {
+
+            .canvas {
                 position: fixed;
-                bottom: 0;
-                right: 5%;
-                text-align: center;
-                color: red;
-                font-size: 30px;
+                bottom: 10px;
+                left: 1000px;
             }
 
         </style>
     </head>
 
     <!--content starts off as hidden-->
-    <body id="content" class="hidden">
+    <body id="content" style="visibility: hidden;">
         <h1 class="title">EXAM TITLE</h1> <!--ADD TEST NAME HERE-->
 
-        <p>ADD TEST CONTENT HERE. YOU MAY TYPE DIRECTLY HERE OR ADD YOUR OWN FILE.</p> <!--ADD TEST CONTENT HERE-->
+        <h3 style="text-align: center;">ADD TEST CONTENT HERE. YOU MAY TYPE DIRECTLY HERE OR ADD YOUR OWN FILE.</h3>
 
         <h1 id="time" class="timer"></h1>
 
+        <!--canvas width same as .timer class-->
+        <canvas id="canvas" width="240" height="90" class="canvas">Your browser doesn't support canvas</canvas>
+
         <script>
-            checkTime();    //initial method call
+            checkTime();    //initial method call to update timer and check local time
+            
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+            var posX = posY = 0;
+            var stroke;  //stroke color
+            ctx.lineWidth = 5;
+            drawOutline();    //initial method call to draw outline
             
             function checkTime() {
                 var currentTime = new Date();
@@ -72,23 +75,61 @@
                 var minutesLeft = ("0" + Math.floor(timeLeft / 60) % 60).slice(-2);
                 var secondsLeft = ("0" + timeLeft % 60).slice(-2);
 
-                //close window when timer hits zero or test is opened before start time
-                if (timeLeft < 0 || currentTime.getTime() < startTime.getTime()) {
-                    //if you want the window to close instead of redirect, uncomment first line and comment out second
-                    //window.close()
-                    window.location.href = "https://www.youtube.com/watch?v=oHg5SJYRHA0"
-                } else {
-                    document.getElementById("content").className = "visible";
-                }
+                if (currentTime.getTime() < startTime.getTime() || timeLeft < 0) {
+                    //throw appropriate alerts
+                    if (currentTime.getTime() < startTime.getTime())
+                        alert("Test will start at " + startTime.toLocaleTimeString());
+                    else
+                        alert("Test ended at " + endTime.toLocaleTimeString())
 
-                if (timeLeft < 300) {
-                    document.getElementById("time").className = "warning";
+                    //window.close() //this line closes window
+                    window.location.href = "https://www.youtube.com/watch?v=oHg5SJYRHA0"    //this line redirects to pasted url
+                } else {
+                    document.getElementById("content").style = "visibility: visible;";
+
+                    if (timeLeft == 300)
+                        alert("5 minutes remaining");
+                    else if (timeLeft < 300)
+                        document.getElementById("time").style = "color: red;";
+
+                    //update text with new time
+                    document.getElementById("time").innerHTML =  "Time Remaining\n" + hoursLeft + ":" + minutesLeft + ":" + secondsLeft;
+
+                    setTimeout(checkTime, 1000); //check time again in 1000ms
+                }
+            }
+
+            function drawOutline() {
+                //get current milliseconds
+                var millis = new Date().getSeconds;
+                
+                if (posX == posY && posX == 0) {
+                    ctx.beginPath();
+                    stroke = getRandomColor();
                 }
                 
-                //update text with new time
-                document.getElementById("time").innerHTML =  hoursLeft + ":" + minutesLeft + ":" + secondsLeft;
+                ctx.strokeStyle = stroke;
+                
+                ctx.moveTo(posX, posY);
+                
+                if (posX != canvas.width && posY == 0) posX++;
+                else if (posX == canvas.width && posY != canvas.height) posY++;
+                else if (posX != 0 && posY == canvas.height) posX--;
+                else posY--;
 
-                setTimeout(checkTime, 1000); //check time again in 1000ms
+                ctx.lineTo(posX, posY);
+                ctx.stroke();
+                
+                setTimeout(drawOutline, 10); //check time again in 1000ms
+            }
+
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
             }
         </script>
     </body>
