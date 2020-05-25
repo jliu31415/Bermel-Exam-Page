@@ -2,50 +2,94 @@
 
 <html>
     <head>
-        <!--comment tag-->
-        <title>Test</title>
+        <title>EXAM TITLE</title> <!--ADD TEST NAME HERE-->
+        <link rel="icon" href="http://www.mrbermel.com/mrbermel.profile.professional2.jpg">
 
         <script>
-            function checkTime() {
-                var d = new Date();
-                var minutes = d.getMinutes();
-                document.getElementById("time").innerHTML = d.toLocaleTimeString();
-                if (minutes % 2 == 1) document.getElementById("content").style.visibility = "hidden";
-                else document.getElementById("content").style.visibility = "visible";
-            }
-        </script>
-    </head>
-    <body>
-        <script>
-            setInterval(checkTime, 1000);
-            function checkTime() {
-                var d = new Date();
-                var minutes = d.getMinutes();
-                document.getElementById("time").innerHTML = d.toLocaleTimeString();
-                if (minutes % 2 == 1) document.getElementById("content").style.visibility = "hidden";
-                else document.getElementById("content").style.visibility = "visible";
-            }
+            //new Date(YEAR, MONTH, DATE, HOUR, MINUTE)
+            //MONTH starts 0: JAN = 0 AND DEC = 11
+            //Use military time format
+
+            var startTime = new Date(2020, 4, 25, 12, 00);
+            var endTime = new Date(2020, 4, 28, 12, 00);
         </script>
 
-        <h1>Exam will be locked if minute count is odd</h1>
-        <p id = "time">Loading...</p>
-        
-        <div id = "content">
-            <!--document starts off hidden-->
-            <script>document.getElementById("content").style.visibility = "hidden"</script>
+        <style>
+            .visible {
+                visibility: visible;
+                background: beige;
+            }
 
-            <h1>Exam Content</h1>
+            .hidden {
+                visibility: hidden;
+            }
 
-            <p>Upload HTML file with exam questions</p>
-
-            <hr><br>
-
-            <img id = "smileyID" src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/SNice.svg/1200px-SNice.svg.png"
-                title = "Smiley" width = 100px height = 100px alt = "Alt Tag">
+            .title {
+                padding: 30px;
+                background: khaki;
+                color: black;
+                font-size: 30px;
+            }
             
-            <hr><br>
+            .timer {
+                position: fixed;
+                bottom: 0;
+                right: 5%;
+                text-align: center;
+                color: black;
+                font-size: 30px;
+            }
+            
+            /*timer warning*/
+            .warning {
+                position: fixed;
+                bottom: 0;
+                right: 5%;
+                text-align: center;
+                color: red;
+                font-size: 30px;
+            }
 
-            <button onclick = "alert('Mr. Bermel is awesome');">Click Me</button><br>
-        </div>
+        </style>
+    </head>
+
+    <!--content starts off as hidden-->
+    <body id="content" class="hidden">
+        <h1 class="title">EXAM TITLE</h1> <!--ADD TEST NAME HERE-->
+
+        <p>ADD TEST CONTENT HERE. YOU MAY TYPE DIRECTLY HERE OR ADD YOUR OWN FILE.</p> <!--ADD TEST CONTENT HERE-->
+
+        <h1 id="time" class="timer"></h1>
+
+        <script>
+            checkTime();    //initial method call
+            
+            function checkTime() {
+                var currentTime = new Date();
+
+                var timeLeft = Math.floor((endTime.getTime() - currentTime.getTime()) / 1000); //time left in seconds
+                var hoursLeft = ("0" + Math.floor(timeLeft / 3600)).slice(-2);
+                var minutesLeft = ("0" + Math.floor(timeLeft / 60) % 60).slice(-2);
+                var secondsLeft = ("0" + timeLeft % 60).slice(-2);
+
+                //close window when timer hits zero or test is opened before start time
+                if (timeLeft < 0 || currentTime.getTime() < startTime.getTime()) {
+                    //if you want the window to close instead of redirect, uncomment first line and comment out second
+                    //window.close()
+                    window.location.href = "https://www.youtube.com/watch?v=oHg5SJYRHA0"
+                } else {
+                    document.getElementById("content").className = "visible";
+                }
+
+                if (timeLeft < 300) {
+                    document.getElementById("time").className = "warning";
+                }
+                
+                //update text with new time
+                document.getElementById("time").innerHTML =  hoursLeft + ":" + minutesLeft + ":" + secondsLeft;
+
+                setTimeout(checkTime, 1000); //check time again in 1000ms
+            }
+        </script>
     </body>
 </html>
