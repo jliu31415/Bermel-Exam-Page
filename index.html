@@ -30,7 +30,7 @@
             .timer {
                 position: fixed;
                 bottom: 10px;
-                left: 1000px;
+                right: 20px;
                 width: 240px;
                 text-align: center;
                 color: black;
@@ -40,7 +40,7 @@
             .canvas {
                 position: fixed;
                 bottom: 10px;
-                left: 1000px;
+                right: 20px;
             }
 
         </style>
@@ -100,9 +100,6 @@
             }
 
             function drawOutline() {
-                //get current milliseconds
-                var millis = new Date().getSeconds;
-                
                 if (posX == posY && posX == 0) {
                     ctx.beginPath();
                     stroke = getRandomColor();
