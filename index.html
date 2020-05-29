@@ -10,8 +10,8 @@
             //MONTH starts 0: JAN = 0 AND DEC = 11
             //Use military time format
 
-            var startTime = new Date(2020, 4, 25, 12, 00);
-            var endTime = new Date(2020, 4, 26, 12, 00);
+            var startTime = new Date(2020, 4, 29, 9, 40);
+            var endTime = new Date(2020, 4, 29, 10, 00);
         </script>
 
         <style>
@@ -30,8 +30,8 @@
             .timer {
                 position: fixed;
                 bottom: 10px;
-                right: 20px;
-                width: 240px;
+                right: 10px;
+                width: 450px;
                 text-align: center;
                 color: black;
                 font-size: 25px;
@@ -40,7 +40,7 @@
             .canvas {
                 position: fixed;
                 bottom: 10px;
-                right: 20px;
+                right: 10px;
             }
 
         </style>
@@ -55,19 +55,28 @@
         <h1 id="time" class="timer"></h1>
 
         <!--canvas width same as .timer class-->
-        <canvas id="canvas" width="240" height="90" class="canvas">Your browser doesn't support canvas</canvas>
+        <canvas id="canvas" width="450" height="60" class="canvas">Your browser doesn't support canvas</canvas>
 
         <script>
-            checkTime();    //initial method call to update timer and check local time
-            
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
-            var posX = posY = 0;
-            var stroke;  //stroke color
+            var perimeter = 2 * (canvas.width + canvas.height);
+
+            //original outline
+            ctx.strokeStyle = window.getComputedStyle(document.querySelector(".title")).getPropertyValue("background-color");
             ctx.lineWidth = 5;
-            drawOutline();    //initial method call to draw outline
+            ctx.beginPath();
+            ctx.rect(0, 0, canvas.width, canvas.height);
+            ctx.stroke();
             
-            function checkTime() {
+            ctx.beginPath();
+            ctx.strokeStyle = window.getComputedStyle(document.querySelector(".title")).getPropertyValue("background-color");
+            ctx.strokeStyle = "#000000";
+            ctx.moveTo(0, 0);   //start at origin
+
+            checkTime();    //initial method call to update timer and draw outline
+            
+            function checkTime(currentTime) {
                 var currentTime = new Date();
 
                 var timeLeft = Math.floor((endTime.getTime() - currentTime.getTime()) / 1000); //time left in seconds
@@ -79,11 +88,8 @@
                     //throw appropriate alerts
                     if (currentTime.getTime() < startTime.getTime())
                         alert("Test will start at " + startTime.toLocaleTimeString());
-                    else
-                        alert("Test ended at " + endTime.toLocaleTimeString())
-
-                    //window.close() //this line closes window
-                    window.location.href = "https://www.youtube.com/watch?v=oHg5SJYRHA0"    //this line redirects to pasted url
+                    window.close() //this line closes window
+                    //window.location.href = "INSERT URL HERE!!!"
                 } else {
                     document.getElementById("content").style = "visibility: visible;";
 
@@ -93,40 +99,24 @@
                         document.getElementById("time").style = "color: red;";
 
                     //update text with new time
-                    document.getElementById("time").innerHTML =  "Time Remaining\n" + hoursLeft + ":" + minutesLeft + ":" + secondsLeft;
+                    document.getElementById("time").innerHTML =  "Work Time Remaining: " + hoursLeft + ":" + minutesLeft + ":" + secondsLeft;
+                    
+                    updateOutline(currentTime);  //draw rectangle outline
 
-                    setTimeout(checkTime, 1000); //check time again in 1000ms
+                    setTimeout(checkTime, 500); //check time again in 500ms
                 }
             }
 
-            function drawOutline() {
-                if (posX == posY && posX == 0) {
-                    ctx.beginPath();
-                    stroke = getRandomColor();
-                }
+            function updateOutline(currentTime) {
+                //find proportion of time elasped
+                var elasped = (currentTime.getTime() - startTime.getTime()) / (endTime.getTime() - startTime.getTime());
+                elapsed = Math.round(elasped * 60) / 60;    //round to the nearest 1/60
+                if (elasped < canvas.width / perimeter) ctx.lineTo(elasped * perimeter, 0);
+                else if (elasped < .5) ctx.lineTo(canvas.width, elapsed * perimeter - canvas.width);
+                else if (elapsed < .5 + canvas.width / perimeter) ctx.lineTo(canvas.width - (elasped * perimeter - perimeter / 2), canvas.height);
+                else ctx.lineTo(0, canvas.height - (elasped * perimeter - perimeter / 2 - canvas.width));
                 
-                ctx.strokeStyle = stroke;
-                
-                ctx.moveTo(posX, posY);
-                
-                if (posX != canvas.width && posY == 0) posX++;
-                else if (posX == canvas.width && posY != canvas.height) posY++;
-                else if (posX != 0 && posY == canvas.height) posX--;
-                else posY--;
-
-                ctx.lineTo(posX, posY);
                 ctx.stroke();
-                
-                setTimeout(drawOutline, 10); //check time again in 1000ms
-            }
-
-            function getRandomColor() {
-                var letters = '0123456789ABCDEF';
-                var color = '#';
-                for (var i = 0; i < 6; i++) {
-                    color += letters[Math.floor(Math.random() * 16)];
-                }
-                return color;
             }
         </script>
     </body>
