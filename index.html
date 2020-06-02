@@ -10,8 +10,8 @@
             //MONTH starts 0: JAN = 0 AND DEC = 11
             //Use military time format
 
-            var startTime = new Date(2020, 4, 29, 9, 40);
-            var endTime = new Date(2020, 4, 29, 10, 00);
+            var startTime = new Date(2020, 5, 2, 13, 00);
+            var endTime = new Date(2020, 5, 2, 13, 10);
         </script>
 
         <style>
@@ -62,19 +62,14 @@
             var ctx = canvas.getContext("2d");
             var perimeter = 2 * (canvas.width + canvas.height);
 
-            //original outline
-            ctx.strokeStyle = window.getComputedStyle(document.querySelector(".title")).getPropertyValue("background-color");
+            //rectangle outline
+            ctx.strokeStyle = "#000000";
             ctx.lineWidth = 5;
             ctx.beginPath();
             ctx.rect(0, 0, canvas.width, canvas.height);
             ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.strokeStyle = window.getComputedStyle(document.querySelector(".title")).getPropertyValue("background-color");
-            ctx.strokeStyle = "#000000";
-            ctx.moveTo(0, 0);   //start at origin
 
-            checkTime();    //initial method call to update timer and draw outline
+            checkTime();    //initial method call to update timer
             
             function checkTime(currentTime) {
                 var currentTime = new Date();
@@ -100,23 +95,9 @@
 
                     //update text with new time
                     document.getElementById("time").innerHTML =  "Work Time Remaining: " + hoursLeft + ":" + minutesLeft + ":" + secondsLeft;
-                    
-                    updateOutline(currentTime);  //draw rectangle outline
 
-                    setTimeout(checkTime, 500); //check time again in 500ms
+                    setTimeout(checkTime, 1000); //check time again in 1000ms
                 }
-            }
-
-            function updateOutline(currentTime) {
-                //find proportion of time elasped
-                var elasped = (currentTime.getTime() - startTime.getTime()) / (endTime.getTime() - startTime.getTime());
-                elapsed = Math.round(elasped * 60) / 60;    //round to the nearest 1/60
-                if (elasped < canvas.width / perimeter) ctx.lineTo(elasped * perimeter, 0);
-                else if (elasped < .5) ctx.lineTo(canvas.width, elapsed * perimeter - canvas.width);
-                else if (elapsed < .5 + canvas.width / perimeter) ctx.lineTo(canvas.width - (elasped * perimeter - perimeter / 2), canvas.height);
-                else ctx.lineTo(0, canvas.height - (elasped * perimeter - perimeter / 2 - canvas.width));
-                
-                ctx.stroke();
             }
         </script>
     </body>
